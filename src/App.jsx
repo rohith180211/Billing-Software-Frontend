@@ -1,6 +1,8 @@
+import MenuBar from "./Components/MenuBar/menuBar.jsx";
+
 const App=()=>{
     return (
-      <div>Hello World</div>
+      <div><MenuBar/></div>
     );
 }
 export default App;
