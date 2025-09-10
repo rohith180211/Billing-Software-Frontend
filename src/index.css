@@ -1,8 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
-*{
+* {
     box-sizing: border-box;
     padding: 0;
     margin: 0;
     font-family: 'Outfit', sans-serif !important;
+    background-color: #2C3335; /* Full black page */
+    color: #fff;
+
+}
+
+body {
+    background-color: #2C3335; /* Full black page */
+    color: #fff;            /* Makes text readable */
 }
