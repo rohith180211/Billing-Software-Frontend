@@ -25,11 +25,12 @@ const CategoryForm = () => {
 
     const onSubmitHandler=async (e) => {
         e.preventDefault();
-        setLoading(true);
+
         if (!image) {
             toast.error("Select image for category");
             return;
         }
+        setLoading(true);
         const formData = new FormData();
         formData.append('category', JSON.stringify(data));
         formData.append("file", image);
