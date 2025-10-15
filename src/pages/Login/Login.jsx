@@ -1,7 +1,47 @@
 import './Login.css'
+import {useContext, useState} from "react";
+import toast from "react-hot-toast";
+import {login} from "../../Service/AuthService.js";
+import {useNavigate} from "react-router-dom";
+import {AppContext} from "../../context/AppContext.js";
 
 
 const Login = () => {
+    const navigate = useNavigate();
+    const{setAuthData}=useContext(AppContext);
+    const [loading,setLoading] = useState(false);
+    const[data,setData] = useState(
+        {
+            email: "",
+            password: "",
+        }
+    );
+    const onChangeHandler=(e)=>{
+        const name=e.target.name;
+        const value = e.target.value;
+        setData((data)=>({...data, [name]:value}))
+    }
+    const onSubmitHandler=async (e)=>{
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const response=await login(data);
+            if(response.status === 200){
+                toast.success("Login successfull");
+                localStorage.setItem("token",response.data.token);
+                localStorage.setItem("role",response.data.role);
+                setAuthData(response.data.token,response.data.role);
+                navigate("/dashboard");
+            }
+        }
+        catch(err){
+            console.log(err);
+            toast.error("Email/Password Invalid");
+        }
+        finally {
+            setLoading(false);
+        }
+    }
     return (
         <div className="bg-light d-flex align-items-center justify-content-center vh-100 login-background">
             <div className="shadow-lg w-100" style={{maxWidth:'480px'}}>
@@ -13,19 +53,19 @@ const Login = () => {
                         </p>
                     </div>
                     <div className="mt-4">
-                        <form >
+                        <form onSubmit={onSubmitHandler}>
                             <div className="mb-4">
                                 <label htmlFor="email" className="form-label text-muted">
                                     Email address
                                 </label>
-                                <input type="text" name="email" id="email" className="form-control" placeholder="Enter email address" />
+                                <input type="text" name="email" id="email" className="form-control" placeholder="Enter email address" onChange={onChangeHandler} value={data.email}/>
                             </div>
                             <div className="mb-4">
                                 <label htmlFor="password" className="form-label text-muted">
                                     Password
                                 </label>
                                 <input type="password" name="password" id="password" className="form-control"
-                                       placeholder="Enter Password"/>
+                                       onChange={onChangeHandler} value={data.password} placeholder="Enter Password"/>
                             </div>
                             <div className="d-grid">
                                 <button type="submit" className="btn btn-dark btn-lg">
