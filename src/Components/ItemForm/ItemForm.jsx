@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import {addItem} from "../../Service/ItemService.js";
 
 const ItemForm = () => {
-    const [categories,setItemsData,itemsData]=useContext(AppContext);
+    const [categories,setItemsData,itemsData,setCategories]=useContext(AppContext);
     const [image,setImage]=useState(false);
     const [loading,setLoading]=useState(false);
     const[data,setData]=useState({
@@ -24,7 +24,7 @@ const ItemForm = () => {
         e.preventDefault();
         setLoading(true);
         const formData=new FormData();
-        formData.append("item",data);
+        formData.append("item",JSON.stringify(data));
         formData.append("file",image);
         try{
             if(!image){
@@ -34,7 +34,7 @@ const ItemForm = () => {
             const response=await addItem(formData)
             if(response.status === 201){
                 setItemsData([...itemsData,response.data]);
-                //TODO: UPDATE THE CATEGORY STATE
+                setCategories((prevCategories)=>prevCategories.map(category=>category.categoryId===data.category.id ? {...category,items:category.items+1} : category));
                 toast.success("Item added successfully.");
                 setData({
                     name:"",
@@ -42,6 +42,7 @@ const ItemForm = () => {
                     price:"",
                     categoryId:"",
                 })
+                setImage(false);
             }
             else{
                 toast.error("Something went wrong");
@@ -81,7 +82,7 @@ const ItemForm = () => {
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="category" className="form-label">Category</label>
-                                    <select className="form-control" name="category" id="category" onChange={onChangeHandler} value={data.category}>
+                                    <select className="form-control" name="categoryId" id="category" onChange={onChangeHandler} value={data.categoryId}>
                                         <option value="">Select a category</option>
                                         {categories.map((c,index)=><option key={index} value={c.categoryId}>{c.name}</option>)}
                                     </select>
